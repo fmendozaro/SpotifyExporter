@@ -7,37 +7,32 @@
  * https://developer.spotify.com/web-api/authorization-guide/#client_credentials_flow
  */
 
-var request = require('request'); // "Request" library
+// var request = require('request'); // "Request" library
 
-var client_id = 'CLIENT_ID'; // Your client id
-var client_secret = 'CLIENT_SECRET'; // Your secret
+var client_id = ''; // Your client id
+var client_secret = ''; // Your secret
+var user_id = '';
+var playlist_id = '';
 
-// your application requests authorization
-var authOptions = {
-  url: 'https://accounts.spotify.com/api/token',
-  headers: {
-    'Authorization': 'Basic ' + (new Buffer(client_id + ':' + client_secret).toString('base64'))
-  },
-  form: {
-    grant_type: 'client_credentials'
-  },
-  json: true
+
+// use the access token to access the Spotify Web API
+// var token = body.access_token;
+var options = {
+    headers: {
+        'Authorization': 'Bearer ' + ''
+    },
+    json: true
 };
 
-request.post(authOptions, function(error, response, body) {
-  if (!error && response.statusCode === 200) {
-
-    // use the access token to access the Spotify Web API
-    var token = body.access_token;
-    var options = {
-      url: 'https://api.spotify.com/v1/users/jmperezperez',
-      headers: {
-        'Authorization': 'Bearer ' + token
-      },
-      json: true
-    };
-    request.get(options, function(error, response, body) {
-      console.log(body);
+fetch('https://api.spotify.com/v1/users/'+user_id+'/playlists/'+playlist_id+'/tracks?limit=100', options).then(function(response){
+    return response.json();
+}).then(function(results){
+    document.write(`<ul>`);
+    results.items.forEach(function(k, v){
+        document.write(`<li>${k.track.name} - ${k.track.artists[0].name}</li>`);
     });
-  }
+    document.write(`</ul>`);
 });
+
+
+
